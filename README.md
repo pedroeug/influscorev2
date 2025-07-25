@@ -21,11 +21,6 @@
 - **Keywords extraídas** de dados reais
 - **Score baseado** em informações verdadeiras
 
-> **Atenção**: para que a busca ocorra de forma realmente online, é preciso
-> definir as chaves das APIs nas variáveis de ambiente:
-> `GOOGLE_API_KEY`, `GOOGLE_CX`, `YOUTUBE_API_KEY` e `TWITTER_BEARER_TOKEN`.
-> Sem essas chaves a aplicação não conseguirá consultar as plataformas e
-> retornará vazio.
 
 ## 🔍 **Como Funciona a Busca REAL:**
 
