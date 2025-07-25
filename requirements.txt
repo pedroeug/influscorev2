@@ -1,4 +1,5 @@
 streamlit
 googlesearch-python
-youtube-search-python
-httpx
+requests
+beautifulsoup4
+lxml
