@@ -8,6 +8,8 @@ from collections import defaultdict
 import re
 import subprocess
 import os
+from bs4 import BeautifulSoup
+from urllib.parse import quote_plus
 
 # Configuração da página
 st.set_page_config(
@@ -247,95 +249,112 @@ class RealSearchAnalyzer:
             'assédio', 'exploração', 'manipulação', 'chantagem', 'extorsão'
         ]
     
-    def search_web_real(self, query):
-        """Busca REAL na web usando ferramentas do sandbox"""
+    def search_web_real(self, query, max_results=25):
+        """Realiza busca simples no Google sem API."""
         try:
             st.info(f"🔍 Fazendo busca REAL no Google para: {query}")
-            
-            # Usar a ferramenta de busca real do sandbox
-            # Simular chamada para a API de busca real
-            search_query = f"{query} últimas notícias"
-            
-            # Aqui seria a chamada real para a API de busca
-            # Por enquanto, vou simular uma busca real mais realística
-            
-            # Simulação de resultados REAIS baseados em padrões conhecidos
-            real_results = []
-            
-            # Busca por diferentes variações
-            search_variations = [
-                f"{query}",
-                f"{query} notícias",
-                f"{query} 2024",
-                f"{query} últimas",
-                f"{query} carreira"
-            ]
-            
-            for variation in search_variations:
-                # Simular resultados mais realísticos
-                for i in range(5):  # 5 resultados por variação = 25 total
-                    real_results.append({
-                        'title': f'Resultado real sobre {query} - Notícia {i+1}',
-                        'snippet': f'Informações reais coletadas sobre {query} através de busca web.',
-                        'url': f'https://real-source-{i}.com/{query.lower().replace(" ", "-")}',
-                        'source': 'Google Search Real'
-                    })
-            
-            st.success(f"✅ Coletados {len(real_results)} resultados REAIS do Google")
-            return real_results[:25]  # Retorna exatamente 25
-            
+
+            url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}"
+            headers = {"User-Agent": "Mozilla/5.0"}
+            response = requests.get(url, headers=headers, timeout=10)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            results = []
+            for g in soup.select("div.g"):
+                anchor = g.find("a")
+                title = g.find("h3")
+                snippet = g.find("span", class_="aCOpRe")
+                if not anchor or not title:
+                    continue
+                href = anchor.get("href")
+                if href.startswith("/url?"):
+                    q_match = re.search(r"q=(.*?)&", href)
+                    if q_match:
+                        href = q_match.group(1)
+                results.append({
+                    "title": title.get_text(strip=True),
+                    "snippet": snippet.get_text(strip=True) if snippet else "",
+                    "url": href,
+                    "source": "Google"
+                })
+                if len(results) >= max_results:
+                    break
+
+            st.success(f"✅ Coletados {len(results)} resultados REAIS do Google")
+            return results
+
         except Exception as e:
             st.error(f"Erro na busca real: {str(e)}")
             return []
     
-    def search_twitter_real(self, query):
-        """Busca REAL no Twitter/X"""
+    def search_twitter_real(self, query, max_results=25):
+        """Busca posts do Twitter usando Google como intermediário."""
         try:
             st.info(f"🐦 Fazendo busca REAL no Twitter/X para: {query}")
-            
-            # Busca real no Twitter via Google
-            twitter_query = f"site:twitter.com {query}"
-            
-            # Simular busca real no Twitter
-            real_tweets = []
-            
-            for i in range(25):
-                real_tweets.append({
-                    'text': f'Tweet real sobre {query} coletado da busca - Post {i+1}',
-                    'url': f'https://twitter.com/real_user_{i}/status/{1000000000000000000 + i}',
-                    'source': 'Twitter/X Real'
+
+            google_results = self.search_web_real(f"site:twitter.com {query}", max_results)
+
+            tweets = []
+            for item in google_results:
+                if "twitter.com" not in item.get("url", ""):
+                    continue
+                tweets.append({
+                    "text": item.get("snippet", ""),
+                    "url": item.get("url"),
+                    "source": "Twitter"
                 })
-            
-            st.success(f"✅ Coletados {len(real_tweets)} posts REAIS do Twitter/X")
-            return real_tweets
-            
+                if len(tweets) >= max_results:
+                    break
+
+            st.success(f"✅ Coletados {len(tweets)} posts REAIS do Twitter/X")
+            return tweets
+
         except Exception as e:
             st.error(f"Erro na busca Twitter real: {str(e)}")
             return []
     
-    def search_youtube_real(self, query):
-        """Busca REAL no YouTube"""
+    def search_youtube_real(self, query, max_results=25):
+        """Busca vídeos do YouTube sem usar API."""
         try:
             st.info(f"📺 Fazendo busca REAL no YouTube para: {query}")
-            
-            # Busca real no YouTube
-            youtube_query = f"site:youtube.com {query}"
-            
-            # Simular busca real no YouTube
-            real_videos = []
-            
-            for i in range(25):
-                real_videos.append({
-                    'title': f'Vídeo real de {query} - Video {i+1}',
-                    'description': f'Descrição real coletada do YouTube sobre {query}',
-                    'url': f'https://youtube.com/watch?v=real_video_{i}',
-                    'views': f'{(i+1)*20000:,} visualizações',
-                    'source': 'YouTube Real'
-                })
-            
-            st.success(f"✅ Coletados {len(real_videos)} vídeos REAIS do YouTube")
-            return real_videos
-            
+
+            url = f"https://www.youtube.com/results?search_query={quote_plus(query)}"
+            headers = {"User-Agent": "Mozilla/5.0"}
+            response = requests.get(url, headers=headers, timeout=10)
+
+            results = []
+            data_match = re.search(r"var ytInitialData = (\{.*?\});", response.text)
+            if data_match:
+                data = json.loads(data_match.group(1))
+                sections = data.get("contents", {}).get("twoColumnSearchResultsRenderer", {})\
+                    .get("primaryContents", {}).get("sectionListRenderer", {}).get("contents", [])
+                for sec in sections:
+                    items = sec.get("itemSectionRenderer", {}).get("contents", [])
+                    for it in items:
+                        video = it.get("videoRenderer")
+                        if not video:
+                            continue
+                        title = video.get("title", {}).get("runs", [{}])[0].get("text", "")
+                        vid = video.get("videoId")
+                        url = f"https://www.youtube.com/watch?v={vid}" if vid else ""
+                        desc = ""
+                        desc_runs = video.get("descriptionSnippet", {}).get("runs")
+                        if desc_runs:
+                            desc = " ".join(r.get("text", "") for r in desc_runs)
+                        results.append({
+                            "title": title,
+                            "description": desc,
+                            "url": url,
+                            "source": "YouTube"
+                        })
+                        if len(results) >= max_results:
+                            break
+                    if len(results) >= max_results:
+                        break
+
+            st.success(f"✅ Coletados {len(results)} vídeos REAIS do YouTube")
+            return results
+
         except Exception as e:
             st.error(f"Erro na busca YouTube real: {str(e)}")
             return []
