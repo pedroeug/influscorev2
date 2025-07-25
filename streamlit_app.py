@@ -3,7 +3,6 @@ from googlesearch import search as google_search
 from youtubesearchpython import VideosSearch
 
 st.set_page_config(page_title="InfluScore Real", page_icon="🔍", layout="wide")
-
 st.title("🔍 InfluScore Real")
 st.write("Busca real no Google, YouTube e Twitter/X")
 
@@ -22,14 +21,17 @@ if st.button("🔍 Buscar"):
 
         # YouTube Results
         st.subheader("Resultados YouTube")
-        videos_search = VideosSearch(query, limit=5)
-        youtube_results = []
-        for v in videos_search.result().get('result', []):
-            youtube_results.append({
-                "title": v.get('title'),
-                "link": v.get('link')
-            })
-        st.write(youtube_results)
+        try:
+            videos_search = VideosSearch(query, limit=5)
+            youtube_results = []
+            for v in videos_search.result().get('result', []):
+                youtube_results.append({
+                    "title": v.get('title'),
+                    "link": v.get('link')
+                })
+            st.write(youtube_results)
+        except Exception as e:
+            st.error(f"Erro na busca do YouTube: {e}")
 
         # Twitter Results via Google
         st.subheader("Resultados Twitter/X")

@@ -1,3 +1,4 @@
 streamlit
 googlesearch-python
 youtube-search-python
+httpx

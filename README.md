@@ -1,12 +1,13 @@
-# InfluScore Real
+# InfluScore Real Minimal
 
-Este é um exemplo mínimo de aplicativo Streamlit que realiza buscas reais no Google, YouTube e Twitter/X sem uso de API paga.
+Este aplicativo Streamlit realiza buscas reais no Google, YouTube e Twitter/X sem chamadas de rede no import.
 
 ## Dependências
 
 - streamlit
 - googlesearch-python
 - youtube-search-python
+- httpx
 
 ## Execução
 
