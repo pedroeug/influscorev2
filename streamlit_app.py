@@ -16,99 +16,242 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS personalizado
+# CSS moderno com fundo branco e gradiente roxo-azul
 st.markdown("""
 <style>
+    /* Reset e base */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+    
+    /* Fundo branco limpo */
+    .stApp {
+        background: #ffffff;
+    }
+    
+    /* Header com gradiente roxo-azul */
     .main-header {
-        background: linear-gradient(90deg, #6366f1 0%, #ec4899 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: 3rem;
-        font-weight: bold;
+        font-size: 3.5rem;
+        font-weight: 800;
         text-align: center;
         margin-bottom: 0.5rem;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: -0.02em;
     }
     
     .subtitle {
         text-align: center;
-        color: #6b7280;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
+        color: #64748b;
+        font-size: 1.25rem;
+        margin-bottom: 3rem;
+        font-weight: 400;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Input moderno */
+    .stTextInput > div > div > input {
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Botão moderno */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Cards modernos */
+    .metric-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
     }
     
     .score-card {
-        background: white;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border: 2px solid #e2e8f0;
+        border-radius: 20px;
         padding: 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         text-align: center;
         margin: 1rem 0;
-        border: 2px solid #e5e7eb;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
     
-    .risk-very-low { color: #10b981; font-weight: bold; }
-    .risk-low { color: #84cc16; font-weight: bold; }
-    .risk-medium { color: #f59e0b; font-weight: bold; }
-    .risk-high { color: #f97316; font-weight: bold; }
-    .risk-very-high { color: #ef4444; font-weight: bold; }
-    
-    .metric-card {
-        background: #f8fafc;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-        border: 1px solid #e5e7eb;
+    /* Níveis de risco com cores modernas */
+    .risk-very-low { 
+        color: #059669; 
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
+    }
+    .risk-low { 
+        color: #65a30d; 
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(101, 163, 13, 0.1);
+    }
+    .risk-medium { 
+        color: #d97706; 
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);
+    }
+    .risk-high { 
+        color: #dc2626; 
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(220, 38, 38, 0.1);
+    }
+    .risk-very-high { 
+        color: #991b1b; 
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(153, 27, 27, 0.1);
     }
     
+    /* Status das fontes */
     .source-status {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
         padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
         margin: 0.25rem;
-        font-weight: bold;
+        transition: all 0.3s ease;
     }
     
-    .source-success { background: #dcfce7; color: #166534; }
-    .source-error { background: #fef2f2; color: #991b1b; }
+    .source-success { 
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
     
+    .source-loading { 
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+    
+    /* Cards de artigos */
     .article-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #667eea;
     }
     
+    .article-card:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    /* Keywords com gradiente */
     .keyword-positive { 
-        background: #dcfce7; 
-        color: #166534; 
-        padding: 0.5rem 1rem; 
-        border-radius: 0.5rem; 
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
         margin: 0.25rem;
         display: inline-block;
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid #a7f3d0;
     }
     
     .keyword-negative { 
-        background: #fef2f2; 
-        color: #991b1b; 
-        padding: 0.5rem 1rem; 
-        border-radius: 0.5rem; 
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
         margin: 0.25rem;
         display: inline-block;
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid #fecaca;
     }
     
+    /* Progress bar com gradiente */
     .stProgress .st-bo {
-        background: linear-gradient(90deg, #6366f1 0%, #ec4899 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Métricas modernas */
+    .stMetric {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Seções com títulos modernos */
+    h3 {
+        color: #1e293b;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Alertas modernos */
+    .stAlert {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Spinner customizado */
+    .stSpinner {
+        color: #667eea;
+    }
+    
+    /* Dividers sutis */
+    hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        margin: 2rem 0;
     }
 </style>
 """, unsafe_allow_html=True)
 
-class InfluencerAnalyzer:
+class RealInfluencerAnalyzer:
     def __init__(self):
         self.positive_keywords = [
             'sucesso', 'família', 'caridade', 'educação', 'conquista', 'prêmio', 
@@ -134,162 +277,151 @@ class InfluencerAnalyzer:
             'enganação', 'trapaça', 'racismo', 'preconceito', 'discriminação',
             'intolerância', 'machismo', 'homofobia', 'xenofobia'
         ]
+        
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
     
-    def search_google_news(self, query, max_results=8):
-        """Simula busca no Google News com dados realistas"""
+    def search_google_real(self, query, max_results=10):
+        """Busca real no Google"""
         try:
-            # Simulação de resultados baseados no nome do influenciador
-            base_results = [
-                {
-                    'title': f'{query} anuncia novo projeto educacional',
-                    'url': f'https://g1.globo.com/entretenimento/{query.lower().replace(" ", "-")}-projeto-educacional',
-                    'snippet': f'{query} lança iniciativa inovadora para transformar a educação no Brasil através da tecnologia.',
-                    'source': 'G1 Globo',
-                    'date': '2 dias atrás',
-                    'sentiment': 'positive'
-                },
-                {
-                    'title': f'{query} conquista prêmio de influenciador do ano',
-                    'url': f'https://extra.globo.com/tv-e-lazer/{query.lower().replace(" ", "-")}-premio-influenciador',
-                    'snippet': f'{query} é reconhecido pelo impacto positivo e responsabilidade social nas redes sociais.',
-                    'source': 'Extra Online',
-                    'date': '1 semana atrás',
-                    'sentiment': 'positive'
-                },
-                {
-                    'title': f'{query} fala sobre saúde mental e bem-estar',
-                    'url': f'https://veja.abril.com.br/entretenimento/{query.lower().replace(" ", "-")}-saude-mental',
-                    'snippet': f'{query} compartilha experiência pessoal para conscientizar seguidores sobre a importância da saúde mental.',
-                    'source': 'Veja',
-                    'date': '2 semanas atrás',
-                    'sentiment': 'positive'
-                },
-                {
-                    'title': f'{query} se pronuncia sobre polêmica recente',
-                    'url': f'https://folha.uol.com.br/celebridades/{query.lower().replace(" ", "-")}-esclarecimento',
-                    'snippet': f'{query} esclarece mal-entendido e demonstra transparência com seus seguidores.',
-                    'source': 'Folha de S.Paulo',
-                    'date': '3 semanas atrás',
-                    'sentiment': 'neutral'
-                },
-                {
-                    'title': f'{query} promove campanha de solidariedade',
-                    'url': f'https://estadao.com.br/entretenimento/{query.lower().replace(" ", "-")}-solidariedade',
-                    'snippet': f'{query} mobiliza comunidade para ajudar famílias em situação de vulnerabilidade.',
-                    'source': 'Estadão',
-                    'date': '1 mês atrás',
-                    'sentiment': 'positive'
-                }
-            ]
+            search_url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}"
             
-            return base_results[:max_results]
+            response = requests.get(search_url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            results = []
+            
+            # Busca resultados orgânicos
+            search_results = soup.find_all('div', class_='g')
+            
+            for result in search_results[:max_results]:
+                try:
+                    title_elem = result.find('h3')
+                    link_elem = result.find('a')
+                    snippet_elem = result.find('span', class_=['aCOpRe', 'st'])
+                    
+                    if title_elem and link_elem:
+                        title = title_elem.get_text(strip=True)
+                        url = link_elem.get('href', '')
+                        snippet = snippet_elem.get_text(strip=True) if snippet_elem else ''
+                        
+                        if url.startswith('/url?q='):
+                            url = url.split('/url?q=')[1].split('&')[0]
+                        
+                        results.append({
+                            'title': title,
+                            'url': url,
+                            'snippet': snippet,
+                            'source': 'Google Search'
+                        })
+                except Exception as e:
+                    continue
+            
+            return results
             
         except Exception as e:
             st.error(f"Erro na busca Google: {str(e)}")
             return []
     
-    def search_youtube_videos(self, query, max_results=6):
-        """Simula busca no YouTube com dados realistas"""
+    def search_youtube_real(self, query, max_results=8):
+        """Busca real no YouTube"""
         try:
-            base_results = [
-                {
-                    'title': f'{query} - NOVO PROJETO QUE VAI MUDAR TUDO!',
-                    'url': f'https://youtube.com/watch?v=abc123',
-                    'description': f'{query} anuncia projeto revolucionário para educação digital',
-                    'views': '2.1M visualizações',
-                    'likes': '180K',
-                    'date': '3 dias atrás',
-                    'duration': '15:42',
-                    'sentiment': 'positive'
-                },
-                {
-                    'title': f'{query} - FAMÍLIA EM PRIMEIRO LUGAR ❤️',
-                    'url': f'https://youtube.com/watch?v=def456',
-                    'description': f'{query} fala sobre a importância da família e valores',
-                    'views': '1.8M visualizações',
-                    'likes': '220K',
-                    'date': '1 semana atrás',
-                    'duration': '12:30',
-                    'sentiment': 'positive'
-                },
-                {
-                    'title': f'{query} - RESPONDENDO CRÍTICAS COM TRANSPARÊNCIA',
-                    'url': f'https://youtube.com/watch?v=ghi789',
-                    'description': f'{query} responde críticas de forma madura e transparente',
-                    'views': '1.5M visualizações',
-                    'likes': '195K',
-                    'date': '2 semanas atrás',
-                    'duration': '18:15',
-                    'sentiment': 'neutral'
-                },
-                {
-                    'title': f'{query} - AJUDANDO QUEM MAIS PRECISA 🙏',
-                    'url': f'https://youtube.com/watch?v=jkl012',
-                    'description': f'{query} promove ação social para comunidades carentes',
-                    'views': '980K visualizações',
-                    'likes': '85K',
-                    'date': '3 semanas atrás',
-                    'duration': '22:08',
-                    'sentiment': 'positive'
-                }
-            ]
+            search_url = f"https://www.youtube.com/results?search_query={quote_plus(query)}"
             
-            return base_results[:max_results]
+            response = requests.get(search_url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+            
+            # Extrai dados do JavaScript
+            content = response.text
+            results = []
+            
+            # Busca por padrões de vídeos no HTML
+            video_pattern = r'"videoId":"([^"]+)".*?"title":{"runs":\[{"text":"([^"]+)"}.*?"viewCountText":{"simpleText":"([^"]+)"}'
+            matches = re.findall(video_pattern, content)
+            
+            for match in matches[:max_results]:
+                video_id, title, views = match
+                results.append({
+                    'title': title,
+                    'url': f'https://youtube.com/watch?v={video_id}',
+                    'description': f'Vídeo do YouTube sobre {query}',
+                    'views': views,
+                    'source': 'YouTube'
+                })
+            
+            # Se não encontrou pelo regex, usa busca alternativa
+            if not results:
+                soup = BeautifulSoup(content, 'html.parser')
+                scripts = soup.find_all('script')
+                
+                for script in scripts:
+                    if 'ytInitialData' in script.text:
+                        # Extrai títulos básicos
+                        titles = re.findall(r'"title":"([^"]+)"', script.text)
+                        for i, title in enumerate(titles[:max_results]):
+                            if query.lower() in title.lower():
+                                results.append({
+                                    'title': title,
+                                    'url': f'https://youtube.com/results?search_query={quote_plus(title)}',
+                                    'description': f'Conteúdo relacionado a {query}',
+                                    'views': 'N/A',
+                                    'source': 'YouTube'
+                                })
+                        break
+            
+            return results
             
         except Exception as e:
             st.error(f"Erro na busca YouTube: {str(e)}")
             return []
     
-    def search_twitter_posts(self, query, max_results=6):
-        """Simula busca no Twitter/X com dados realistas"""
+    def search_twitter_real(self, query, max_results=8):
+        """Busca real no Twitter/X (método alternativo)"""
         try:
-            base_results = [
-                {
-                    'text': f'{query}: "Gratidão por mais um dia ao lado da minha família! Vocês são minha inspiração ❤️ #família #gratidão"',
-                    'url': f'https://twitter.com/user/status/123',
-                    'likes': 25000,
-                    'retweets': 5500,
-                    'replies': 1200,
-                    'date': '2 horas atrás',
-                    'sentiment': 'positive'
-                },
-                {
-                    'text': f'{query}: "Novo projeto educacional chegando! Vamos transformar vidas através do conhecimento e inovação 📚✨ #educação"',
-                    'url': f'https://twitter.com/user/status/456',
-                    'likes': 18000,
-                    'retweets': 4200,
-                    'replies': 890,
-                    'date': '1 dia atrás',
-                    'sentiment': 'positive'
-                },
-                {
-                    'text': f'{query}: "Peço desculpas pelo mal-entendido. Sempre busco aprender e melhorar como pessoa 🙏 #transparência"',
-                    'url': f'https://twitter.com/user/status/789',
-                    'likes': 12000,
-                    'retweets': 2800,
-                    'replies': 1500,
-                    'date': '3 dias atrás',
-                    'sentiment': 'neutral'
-                },
-                {
-                    'text': f'{query}: "Obrigado pelo carinho de vocês! Juntos somos mais fortes e podemos fazer a diferença 💪❤️"',
-                    'url': f'https://twitter.com/user/status/101',
-                    'likes': 22000,
-                    'retweets': 3900,
-                    'replies': 750,
-                    'date': '5 dias atrás',
-                    'sentiment': 'positive'
-                }
-            ]
+            # Busca no Google por tweets
+            search_query = f"site:twitter.com {query}"
+            search_url = f"https://www.google.com/search?q={quote_plus(search_query)}&num={max_results}"
             
-            return base_results[:max_results]
+            response = requests.get(search_url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            results = []
+            
+            search_results = soup.find_all('div', class_='g')
+            
+            for result in search_results[:max_results]:
+                try:
+                    title_elem = result.find('h3')
+                    link_elem = result.find('a')
+                    snippet_elem = result.find('span', class_=['aCOpRe', 'st'])
+                    
+                    if title_elem and link_elem and 'twitter.com' in str(link_elem):
+                        title = title_elem.get_text(strip=True)
+                        url = link_elem.get('href', '')
+                        snippet = snippet_elem.get_text(strip=True) if snippet_elem else ''
+                        
+                        if url.startswith('/url?q='):
+                            url = url.split('/url?q=')[1].split('&')[0]
+                        
+                        results.append({
+                            'text': title + ' ' + snippet,
+                            'url': url,
+                            'source': 'Twitter/X'
+                        })
+                except Exception as e:
+                    continue
+            
+            return results
             
         except Exception as e:
             st.error(f"Erro na busca Twitter: {str(e)}")
             return []
     
     def analyze_sentiment(self, text):
-        """Análise de sentimento melhorada"""
+        """Análise de sentimento avançada"""
         if not text:
             return 'neutral', 0, []
         
@@ -306,7 +438,7 @@ class InfluencerAnalyzer:
             if keyword in text_lower:
                 found_negative.append(keyword)
         
-        # Análise contextual adicional
+        # Análise contextual
         positive_patterns = [
             r'\b(muito bom|excelente|fantástico|incrível|maravilhoso|ótimo)\b',
             r'\b(amo|adoro|gosto muito|curto|apoio)\b',
@@ -345,7 +477,7 @@ class InfluencerAnalyzer:
         return sentiment, confidence, found_positive + found_negative
     
     def calculate_score(self, google_results, youtube_results, twitter_results):
-        """Cálculo de score avançado"""
+        """Cálculo de score baseado em dados reais"""
         all_content = []
         source_weights = {'google': 0.4, 'youtube': 0.35, 'twitter': 0.25}
         
@@ -389,7 +521,7 @@ class InfluencerAnalyzer:
             })
         
         if not all_content:
-            return 50, 'Médio', '#f59e0b', set(), set(), {}
+            return 50, 'Médio', '#d97706', set(), set(), {}
         
         # Calcula scores ponderados
         weighted_positive = 0
@@ -423,7 +555,7 @@ class InfluencerAnalyzer:
             weighted_negative /= total_weight
         
         # Calcula score final (0-100)
-        base_score = 60  # Score base mais alto
+        base_score = 60
         
         # Ajusta baseado no sentimento
         sentiment_adjustment = (weighted_positive - weighted_negative) * 25
@@ -440,21 +572,21 @@ class InfluencerAnalyzer:
         # Determina nível de risco
         if final_score >= 85:
             risk_level = 'Muito Baixo'
-            risk_color = '#10b981'
+            risk_color = '#059669'
         elif final_score >= 70:
             risk_level = 'Baixo'
-            risk_color = '#84cc16'
+            risk_color = '#65a30d'
         elif final_score >= 50:
             risk_level = 'Médio'
-            risk_color = '#f59e0b'
+            risk_color = '#d97706'
         elif final_score >= 30:
             risk_level = 'Alto'
-            risk_color = '#f97316'
+            risk_color = '#dc2626'
         else:
             risk_level = 'Muito Alto'
-            risk_color = '#ef4444'
+            risk_color = '#991b1b'
         
-        # Estatísticas detalhadas
+        # Estatísticas
         stats = {
             'total_content': len(all_content),
             'positive_ratio': weighted_positive,
@@ -468,239 +600,227 @@ class InfluencerAnalyzer:
         
         return int(final_score), risk_level, risk_color, all_positive_keywords, all_negative_keywords, stats
 
-def create_score_gauge(score, risk_color):
-    """Cria gráfico de gauge para o score"""
+def create_modern_gauge(score, risk_color):
+    """Cria gauge moderno com gradiente roxo-azul"""
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = score,
         domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "Score de Confiança", 'font': {'size': 20}},
+        title = {'text': "Score de Confiança", 'font': {'size': 24, 'color': '#1e293b', 'family': 'Inter'}},
+        number = {'font': {'size': 48, 'color': risk_color, 'family': 'Inter'}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
-            'bar': {'color': risk_color, 'thickness': 0.3},
-            'bgcolor': "white",
-            'borderwidth': 2,
-            'bordercolor': "gray",
+            'axis': {
+                'range': [None, 100], 
+                'tickwidth': 2, 
+                'tickcolor': "#cbd5e1",
+                'tickfont': {'size': 14, 'color': '#64748b'}
+            },
+            'bar': {'color': risk_color, 'thickness': 0.4},
+            'bgcolor': "#f8fafc",
+            'borderwidth': 3,
+            'bordercolor': "#e2e8f0",
             'steps': [
-                {'range': [0, 30], 'color': "#fef2f2"},
-                {'range': [30, 50], 'color': "#fef3c7"},
-                {'range': [50, 70], 'color': "#fef9e3"},
-                {'range': [70, 85], 'color': "#f0fdf4"},
-                {'range': [85, 100], 'color': "#dcfce7"}
+                {'range': [0, 30], 'color': "#fee2e2"},
+                {'range': [30, 50], 'color': "#fed7aa"},
+                {'range': [50, 70], 'color': "#fef3c7"},
+                {'range': [70, 85], 'color': "#d1fae5"},
+                {'range': [85, 100], 'color': "#a7f3d0"}
             ],
             'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
+                'line': {'color': "#667eea", 'width': 4},
+                'thickness': 0.8,
                 'value': 85
             }
         }
     ))
     
     fig.update_layout(
-        height=350,
-        margin=dict(l=20, r=20, t=60, b=20),
+        height=400,
+        margin=dict(l=20, r=20, t=80, b=20),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "darkblue", 'family': "Arial"}
+        font={'color': "#1e293b", 'family': "Inter"}
     )
     
     return fig
 
 def main():
-    # Header
+    # Header moderno
     st.markdown('<h1 class="main-header">📊 InfluScore</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Avalie o risco de parcerias com influenciadores baseado em análise inteligente</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Análise inteligente de influenciadores com dados reais</p>', unsafe_allow_html=True)
     
-    # Input do usuário
+    # Input elegante
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         influencer_name = st.text_input(
-            "Digite o nome do influenciador:",
-            placeholder="Ex: Felipe Neto, Whindersson Nunes, Luisa Sonza...",
-            key="influencer_input"
+            "",
+            placeholder="Digite o nome do influenciador (ex: Felipe Neto, Whindersson Nunes...)",
+            key="influencer_input",
+            label_visibility="collapsed"
         )
         
         analyze_button = st.button("🔍 Analisar Influenciador", use_container_width=True, type="primary")
     
     if analyze_button and influencer_name:
-        with st.spinner(f"Analisando {influencer_name}..."):
-            analyzer = InfluencerAnalyzer()
+        with st.spinner(f"Coletando dados reais sobre {influencer_name}..."):
+            analyzer = RealInfluencerAnalyzer()
             
-            # Progresso
-            progress_bar = st.progress(0)
-            status_text = st.empty()
+            # Container para status
+            status_container = st.container()
+            progress_container = st.container()
             
-            # Busca dados
-            status_text.text("🔍 Buscando notícias no Google...")
-            google_results = analyzer.search_google_news(influencer_name)
+            with progress_container:
+                progress_bar = st.progress(0)
+            
+            with status_container:
+                status_col1, status_col2, status_col3 = st.columns(3)
+                
+                with status_col1:
+                    google_status = st.empty()
+                    google_status.markdown('<span class="source-status source-loading">🔍 Buscando no Google...</span>', unsafe_allow_html=True)
+                
+                with status_col2:
+                    youtube_status = st.empty()
+                    youtube_status.markdown('<span class="source-status source-loading">📺 Aguardando...</span>', unsafe_allow_html=True)
+                
+                with status_col3:
+                    twitter_status = st.empty()
+                    twitter_status.markdown('<span class="source-status source-loading">🐦 Aguardando...</span>', unsafe_allow_html=True)
+            
+            # Busca no Google
+            google_results = analyzer.search_google_real(influencer_name)
+            google_status.markdown('<span class="source-status source-success">✅ Google Concluído</span>', unsafe_allow_html=True)
             progress_bar.progress(33)
             time.sleep(0.5)
             
-            status_text.text("📺 Buscando vídeos no YouTube...")
-            youtube_results = analyzer.search_youtube_videos(influencer_name)
+            # Busca no YouTube
+            youtube_status.markdown('<span class="source-status source-loading">📺 Buscando no YouTube...</span>', unsafe_allow_html=True)
+            youtube_results = analyzer.search_youtube_real(influencer_name)
+            youtube_status.markdown('<span class="source-status source-success">✅ YouTube Concluído</span>', unsafe_allow_html=True)
             progress_bar.progress(66)
             time.sleep(0.5)
             
-            status_text.text("🐦 Buscando posts no Twitter/X...")
-            twitter_results = analyzer.search_twitter_posts(influencer_name)
+            # Busca no Twitter
+            twitter_status.markdown('<span class="source-status source-loading">🐦 Buscando no Twitter/X...</span>', unsafe_allow_html=True)
+            twitter_results = analyzer.search_twitter_real(influencer_name)
+            twitter_status.markdown('<span class="source-status source-success">✅ Twitter/X Concluído</span>', unsafe_allow_html=True)
             progress_bar.progress(100)
             time.sleep(0.5)
-            
-            status_text.text("📊 Calculando score de confiança...")
-            time.sleep(1)
             
             # Calcula score
             score, risk_level, risk_color, positive_keywords, negative_keywords, stats = analyzer.calculate_score(
                 google_results, youtube_results, twitter_results
             )
             
-            # Remove progresso
-            progress_bar.empty()
-            status_text.empty()
+            # Remove containers de progresso
+            progress_container.empty()
+            status_container.empty()
             
-            # Resultados
+            # Resultados modernos
             st.markdown("---")
-            st.markdown(f"## 📊 Análise Completa: {influencer_name}")
+            st.markdown(f"## 📊 Análise de {influencer_name}")
             
             # Layout principal
-            col1, col2 = st.columns([1, 1])
+            col1, col2 = st.columns([1.2, 0.8])
             
             with col1:
                 # Score principal
-                st.markdown("### 🎯 Score de Confiança")
-                fig = create_score_gauge(score, risk_color)
+                fig = create_modern_gauge(score, risk_color)
                 st.plotly_chart(fig, use_container_width=True)
-                
-                # Nível de risco
+            
+            with col2:
+                # Card de risco
                 risk_class = f"risk-{risk_level.lower().replace(' ', '-')}"
                 st.markdown(f"""
                 <div class="score-card">
-                    <h3>🛡️ Nível de Risco</h3>
-                    <h1 class="{risk_class}">{risk_level.upper()}</h1>
-                    <p style="font-size: 1.2rem; margin-top: 1rem;">Score: <strong>{score}/100</strong></p>
+                    <h3 style="margin-bottom: 1rem; color: #1e293b;">🛡️ Nível de Risco</h3>
+                    <h1 class="{risk_class}" style="font-size: 2.5rem; margin: 1rem 0;">{risk_level.upper()}</h1>
+                    <p style="font-size: 1.3rem; color: #64748b; margin: 0;">Score: <strong>{score}/100</strong></p>
                 </div>
                 """, unsafe_allow_html=True)
-            
-            with col2:
-                # Estatísticas
-                st.markdown("### 📈 Estatísticas da Análise")
-                
-                col2_1, col2_2, col2_3 = st.columns(3)
-                with col2_1:
-                    st.metric("📰 Google", len(google_results), "notícias")
-                with col2_2:
-                    st.metric("📺 YouTube", len(youtube_results), "vídeos")
-                with col2_3:
-                    st.metric("🐦 Twitter/X", len(twitter_results), "posts")
-                
-                # Status das fontes
-                st.markdown("### 🔗 Status das Fontes")
-                sources_html = f"""
-                <div style="margin: 1rem 0;">
-                    <span class="source-status source-success">✅ Google News</span>
-                    <span class="source-status source-success">✅ YouTube</span>
-                    <span class="source-status source-success">✅ Twitter/X</span>
-                </div>
-                """
-                st.markdown(sources_html, unsafe_allow_html=True)
                 
                 # Recomendação
-                st.markdown("### 💡 Recomendação Final")
                 if score >= 70:
-                    st.success("✅ **RECOMENDADO** para parcerias comerciais")
-                    st.info("💼 Influenciador apresenta baixo risco para sua marca")
+                    st.success("✅ **RECOMENDADO** para parcerias")
                 elif score >= 50:
-                    st.warning("⚠️ **CAUTELA** - Avaliar contexto específico")
-                    st.info("🔍 Recomenda-se análise mais detalhada")
+                    st.warning("⚠️ **CAUTELA** - Avaliar contexto")
                 else:
-                    st.error("❌ **NÃO RECOMENDADO** - Alto risco para marca")
-                    st.info("🚨 Considere outras opções de parceria")
+                    st.error("❌ **NÃO RECOMENDADO** - Alto risco")
+            
+            # Estatísticas
+            st.markdown("### 📈 Dados Coletados")
+            col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
+            
+            with col_stats1:
+                st.metric("🔍 Google", len(google_results), "resultados")
+            with col_stats2:
+                st.metric("📺 YouTube", len(youtube_results), "vídeos")
+            with col_stats3:
+                st.metric("🐦 Twitter/X", len(twitter_results), "posts")
+            with col_stats4:
+                st.metric("📊 Total", stats['total_content'], "conteúdos")
             
             # Análise de palavras-chave
+            if positive_keywords or negative_keywords:
+                st.markdown("---")
+                st.markdown("### 🔍 Palavras-Chave Encontradas")
+                
+                col_kw1, col_kw2 = st.columns(2)
+                
+                with col_kw1:
+                    st.markdown("**🟢 Palavras Positivas:**")
+                    if positive_keywords:
+                        keywords_html = "".join([f'<span class="keyword-positive">{kw}</span>' for kw in list(positive_keywords)[:8]])
+                        st.markdown(keywords_html, unsafe_allow_html=True)
+                        if len(positive_keywords) > 8:
+                            st.info(f"+ {len(positive_keywords) - 8} outras")
+                    else:
+                        st.info("Nenhuma palavra positiva encontrada")
+                
+                with col_kw2:
+                    st.markdown("**🔴 Palavras Negativas:**")
+                    if negative_keywords:
+                        keywords_html = "".join([f'<span class="keyword-negative">{kw}</span>' for kw in list(negative_keywords)[:8]])
+                        st.markdown(keywords_html, unsafe_allow_html=True)
+                        if len(negative_keywords) > 8:
+                            st.warning(f"+ {len(negative_keywords) - 8} outras")
+                    else:
+                        st.success("✅ Nenhuma palavra negativa encontrada")
+            
+            # Preview dos resultados reais
             st.markdown("---")
-            st.markdown("### 🔍 Análise de Palavras-Chave")
+            st.markdown("### 📰 Conteúdos Encontrados")
             
-            col3, col4 = st.columns(2)
-            
-            with col3:
-                st.markdown("**🟢 Palavras Positivas Encontradas:**")
-                if positive_keywords:
-                    keywords_html = "".join([f'<span class="keyword-positive">{kw}</span>' for kw in list(positive_keywords)[:10]])
-                    st.markdown(keywords_html, unsafe_allow_html=True)
-                    if len(positive_keywords) > 10:
-                        st.info(f"+ {len(positive_keywords) - 10} outras palavras positivas")
-                else:
-                    st.info("Nenhuma palavra positiva específica encontrada")
-            
-            with col4:
-                st.markdown("**🔴 Palavras Negativas Encontradas:**")
-                if negative_keywords:
-                    keywords_html = "".join([f'<span class="keyword-negative">{kw}</span>' for kw in list(negative_keywords)[:10]])
-                    st.markdown(keywords_html, unsafe_allow_html=True)
-                    if len(negative_keywords) > 10:
-                        st.warning(f"+ {len(negative_keywords) - 10} outras palavras negativas")
-                else:
-                    st.success("✅ Nenhuma palavra negativa encontrada")
-            
-            # Preview das matérias
-            st.markdown("---")
-            st.markdown("### 📰 Preview das Últimas Matérias e Conteúdos")
-            
-            # Combina todos os resultados
+            # Combina resultados reais
             all_results = []
-            all_results.extend([(r, 'Google News', '📰') for r in google_results[:3]])
+            all_results.extend([(r, 'Google', '🔍') for r in google_results[:3]])
             all_results.extend([(r, 'YouTube', '📺') for r in youtube_results[:2]])
             all_results.extend([(r, 'Twitter/X', '🐦') for r in twitter_results[:2]])
             
-            for result, source, icon in all_results:
-                title = result.get('title', result.get('text', 'Sem título'))
-                if len(title) > 100:
-                    title = title[:100] + "..."
-                
-                description = result.get('snippet', result.get('description', result.get('text', 'Sem descrição')))
-                if len(description) > 200:
-                    description = description[:200] + "..."
-                
-                date_info = result.get('date', 'Data não disponível')
-                
-                st.markdown(f"""
-                <div class="article-card">
-                    <h4>{icon} {title}</h4>
-                    <p style="color: #6b7280; margin: 0.5rem 0;">{description}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-                        <small style="color: #9ca3af;">📍 Fonte: {source}</small>
-                        <small style="color: #9ca3af;">📅 {date_info}</small>
+            if all_results:
+                for result, source, icon in all_results:
+                    title = result.get('title', result.get('text', 'Sem título'))
+                    if len(title) > 120:
+                        title = title[:120] + "..."
+                    
+                    description = result.get('snippet', result.get('description', result.get('text', 'Sem descrição')))
+                    if len(description) > 250:
+                        description = description[:250] + "..."
+                    
+                    url = result.get('url', '#')
+                    
+                    st.markdown(f"""
+                    <div class="article-card">
+                        <h4 style="margin-bottom: 0.5rem; color: #1e293b;">{icon} {title}</h4>
+                        <p style="color: #64748b; margin: 0.5rem 0; line-height: 1.5;">{description}</p>
+                        <div style="margin-top: 1rem;">
+                            <small style="color: #9ca3af;">📍 Fonte: {source}</small>
+                            {f'<small style="color: #9ca3af; margin-left: 1rem;">🔗 <a href="{url}" target="_blank" style="color: #667eea;">Ver original</a></small>' if url != '#' else ''}
+                        </div>
                     </div>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            # Resumo final
-            st.markdown("---")
-            st.markdown("### 📋 Resumo da Análise")
-            
-            col5, col6, col7 = st.columns(3)
-            
-            with col5:
-                st.metric(
-                    "📊 Score Final", 
-                    f"{score}/100",
-                    delta=f"{score-50} pontos" if score >= 50 else f"{score-50} pontos"
-                )
-            
-            with col6:
-                st.metric(
-                    "🔍 Conteúdos Analisados", 
-                    stats['total_content'],
-                    delta="fontes múltiplas"
-                )
-            
-            with col7:
-                sentiment_ratio = stats['positive_ratio'] - stats['negative_ratio']
-                st.metric(
-                    "😊 Sentimento Geral", 
-                    "Positivo" if sentiment_ratio > 0 else "Negativo" if sentiment_ratio < 0 else "Neutro",
-                    delta=f"{sentiment_ratio:.2f}" if sentiment_ratio != 0 else "0.00"
-                )
+                    """, unsafe_allow_html=True)
+            else:
+                st.info("Nenhum conteúdo específico encontrado. Tente um nome mais conhecido.")
             
             # Botão para nova análise
             st.markdown("---")
@@ -710,48 +830,53 @@ def main():
     elif analyze_button and not influencer_name:
         st.error("⚠️ Por favor, digite o nome de um influenciador para analisar.")
     
-    # Informações adicionais
+    # Informações sobre o sistema
     if not analyze_button:
         st.markdown("---")
-        st.markdown("### ℹ️ Como Funciona o InfluScore")
+        st.markdown("### ℹ️ Como Funciona")
         
         col_info1, col_info2, col_info3 = st.columns(3)
         
         with col_info1:
             st.markdown("""
-            **🔍 Coleta de Dados**
-            - Busca no Google News
-            - Análise de vídeos do YouTube  
-            - Monitoramento do Twitter/X
-            - Últimos 3 meses de atividade
-            """)
+            <div class="metric-card">
+                <h4>🔍 Coleta Real de Dados</h4>
+                <p>• Busca no Google Search<br>
+                • Análise de vídeos do YouTube<br>
+                • Monitoramento do Twitter/X<br>
+                • Dados 100% reais e atualizados</p>
+            </div>
+            """, unsafe_allow_html=True)
         
         with col_info2:
             st.markdown("""
-            **🧠 Análise Inteligente**
-            - 40+ palavras-chave positivas
-            - 30+ palavras-chave negativas
-            - Análise de sentimento contextual
-            - Ponderação por fonte de dados
-            """)
+            <div class="metric-card">
+                <h4>🧠 Análise Inteligente</h4>
+                <p>• 40+ palavras-chave positivas<br>
+                • 30+ palavras-chave negativas<br>
+                • Análise de sentimento contextual<br>
+                • Ponderação por fonte de dados</p>
+            </div>
+            """, unsafe_allow_html=True)
         
         with col_info3:
             st.markdown("""
-            **📊 Score de Risco**
-            - 85-100: Muito Baixo (Verde)
-            - 70-84: Baixo (Verde claro)
-            - 50-69: Médio (Amarelo)
-            - 30-49: Alto (Laranja)
-            - 0-29: Muito Alto (Vermelho)
-            """)
+            <div class="metric-card">
+                <h4>📊 Score de Risco</h4>
+                <p>• 85-100: Muito Baixo (Verde)<br>
+                • 70-84: Baixo (Verde claro)<br>
+                • 50-69: Médio (Amarelo)<br>
+                • 30-49: Alto (Laranja)<br>
+                • 0-29: Muito Alto (Vermelho)</p>
+            </div>
+            """, unsafe_allow_html=True)
     
-    # Footer
+    # Footer elegante
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; color: #6b7280; padding: 2rem;">
-        <p>© 2025 InfluScore. Desenvolvido para análise inteligente de risco de influenciadores.</p>
-        <p>⭐ <strong>Streamlit Cloud Edition</strong> - Otimizado para máxima compatibilidade</p>
-        <p>🚀 <strong>Deploy instantâneo</strong> - Funciona em qualquer plataforma</p>
+    <div style="text-align: center; color: #94a3b8; padding: 2rem; font-family: 'Inter', sans-serif;">
+        <p style="margin-bottom: 0.5rem;">© 2025 InfluScore - Análise inteligente de influenciadores</p>
+        <p style="margin: 0; font-size: 0.9rem;">🚀 <strong>Dados reais</strong> • 🎨 <strong>Design moderno</strong> • ⚡ <strong>Análise instantânea</strong></p>
     </div>
     """, unsafe_allow_html=True)
 
