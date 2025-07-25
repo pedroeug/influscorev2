@@ -21,11 +21,14 @@
 - **Keywords extraídas** de dados reais
 - **Score baseado** em informações verdadeiras
 
+xlmt2x-codex/fix-search-to-return-real-results
 > **Atenção**: as chaves de API são **opcionais**.
 > Caso defina `GOOGLE_API_KEY`, `GOOGLE_CX`, `YOUTUBE_API_KEY` e
 > `TWITTER_BEARER_TOKEN`, as buscas usam as APIs oficiais.
 > Sem essas chaves o aplicativo faz uma raspagem simples das páginas para
 > obter os resultados.
+=======
+main
 
 ## 🔍 **Como Funciona a Busca REAL:**
 
