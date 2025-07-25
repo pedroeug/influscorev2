@@ -1,7 +1,6 @@
-# InfluScore Real
+# 🔍 InfluScore Real - Busca Verdadeira
 
-Este projeto executa buscas reais no Google, YouTube e Twitter/X filtrando resultados dos últimos 90 dias,
-com interface moderna em Streamlit.
+Análise de influenciadores com dados REAIS dos últimos 90 dias.
 
 ## Tecnologias
 - Streamlit
@@ -11,12 +10,12 @@ com interface moderna em Streamlit.
 - Plotly
 - lxml
 
-## Executando
+## Como executar
 1. Instale as dependências:
 ```
 pip install -r requirements.txt
 ```
-2. Rode o app:
+2. Execute o app:
 ```
 streamlit run streamlit_app.py
 ```
