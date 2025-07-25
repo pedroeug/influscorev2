@@ -247,48 +247,55 @@ class RealSearchAnalyzer:
             'assédio', 'exploração', 'manipulação', 'chantagem', 'extorsão'
         ]
     
-    def search_web_real(self, query):
-        """Busca REAL na web usando ferramentas do sandbox"""
+    
+    def search_web_real(self, query, max_results=25):
+        """Realiza busca simples no Google sem usar API."""
         try:
             st.info(f"🔍 Fazendo busca REAL no Google para: {query}")
-            
-            # Usar a ferramenta de busca real do sandbox
-            # Simular chamada para a API de busca real
-            search_query = f"{query} últimas notícias"
-            
-            # Aqui seria a chamada real para a API de busca
-            # Por enquanto, vou simular uma busca real mais realística
-            
-            # Simulação de resultados REAIS baseados em padrões conhecidos
-            real_results = []
-            
-            # Busca por diferentes variações
-            search_variations = [
-                f"{query}",
-                f"{query} notícias",
-                f"{query} 2024",
-                f"{query} últimas",
-                f"{query} carreira"
-            ]
-            
-            for variation in search_variations:
-                # Simular resultados mais realísticos
-                for i in range(5):  # 5 resultados por variação = 25 total
-                    real_results.append({
-                        'title': f'Resultado real sobre {query} - Notícia {i+1}',
-                        'snippet': f'Informações reais coletadas sobre {query} através de busca web.',
-                        'url': f'https://real-source-{i}.com/{query.lower().replace(" ", "-")}',
-                        'source': 'Google Search Real'
+
+            url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}&hl=pt-BR"
+            headers = {
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/115.0 Safari/537.36"
+                )
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            soup = BeautifulSoup(response.text, "lxml")
+
+            results = []
+            for block in soup.select("div.tF2Cxc, div.g"):
+                anchor = block.find("a", href=True)
+                title = block.find("h3")
+                snippet = block.find("div", class_="VwiC3b") or block.find("span", class_="aCOpRe")
+
+                if anchor and title:
+                    href = anchor["href"]
+                    if href.startswith("/url"):
+                        q_match = re.search(r"q=([^&]+)", href)
+                        if q_match:
+                            href = requests.utils.unquote(q_match.group(1))
+
+                    results.append({
+                        "title": title.get_text(strip=True),
+                        "snippet": snippet.get_text(" ", strip=True) if snippet else "",
+                        "url": href,
+                        "source": "Google"
                     })
-            
-            st.success(f"✅ Coletados {len(real_results)} resultados REAIS do Google")
-            return real_results[:25]  # Retorna exatamente 25
-            
+
+                if len(results) >= max_results:
+                    break
+
+            st.success(f"✅ Coletados {len(results)} resultados REAIS do Google")
+            return results
+
         except Exception as e:
             st.error(f"Erro na busca real: {str(e)}")
             return []
-    
-    def search_twitter_real(self, query):
+
+    def search_twitter_real(self, query, max_results=25):
+(self, query):
         """Busca REAL no Twitter/X"""
         try:
             st.info(f"🐦 Fazendo busca REAL no Twitter/X para: {query}")

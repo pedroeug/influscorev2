@@ -1,4 +1,5 @@
 streamlit
 plotly
 requests
-
+beautifulsoup4
+lxml
