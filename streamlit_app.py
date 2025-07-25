@@ -8,6 +8,7 @@ from collections import defaultdict
 import re
 import subprocess
 import os
+from urllib.parse import quote_plus
 
 # Configuração da página
 st.set_page_config(
