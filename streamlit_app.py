@@ -297,7 +297,6 @@ class RealSearchAnalyzer:
 
 
     def search_twitter_real(self, query, max_results=25):
-(self, query):
         """Busca REAL no Twitter/X"""
         try:
             st.info(f"🐦 Fazendo busca REAL no Twitter/X para: {query}")
@@ -788,4 +787,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
