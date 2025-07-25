@@ -1,17 +1,22 @@
-# InfluScore Real Minimal
+# InfluScore Real
 
-Este aplicativo Streamlit realiza buscas reais no Google, YouTube e Twitter/X sem chamadas de rede no import.
+Este projeto executa buscas reais no Google, YouTube e Twitter/X filtrando resultados dos últimos 90 dias,
+com interface moderna em Streamlit.
 
-## Dependências
-
-- streamlit
+## Tecnologias
+- Streamlit
+- Requests
+- BeautifulSoup4
 - googlesearch-python
-- youtube-search-python
-- httpx
+- Plotly
+- lxml
 
-## Execução
-
-```bash
+## Executando
+1. Instale as dependências:
+```
 pip install -r requirements.txt
+```
+2. Rode o app:
+```
 streamlit run streamlit_app.py
 ```
