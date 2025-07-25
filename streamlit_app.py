@@ -256,61 +256,6 @@ class RealSearchAnalyzer:
         self.youtube_api_key = os.getenv("YOUTUBE_API_KEY")
         self.twitter_bearer_token = os.getenv("TWITTER_BEARER_TOKEN")
 
-    def _google_scrape(self, query, max_results=25):
-        """Raspa resultados simples do Google."""
-        try:
-            url = "https://r.jina.ai/https://www.google.com/search"
-            params = {"q": query}
-            resp = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-            soup = BeautifulSoup(resp.text, "html.parser")
-            results = []
-            for g in soup.select("div.g"):
-                title = g.find("h3")
-                if not title:
-                    continue
-                link = g.find("a", href=True)
-                snippet = g.find("span", class_="aCOpRe")
-                results.append({
-                    "title": title.get_text(strip=True),
-                    "snippet": snippet.get_text(strip=True) if snippet else "",
-                    "url": link["href"] if link else "",
-                    "source": "Google (scrape)",
-                })
-                if len(results) >= max_results:
-                    break
-            return results
-        except Exception as e:
-            st.error(f"Erro na raspagem do Google: {e}")
-            return []
-
-    def _youtube_scrape(self, query, max_results=25):
-        """Raspa resultados de busca do YouTube."""
-        try:
-            url = "https://r.jina.ai/https://www.youtube.com/results"
-            params = {"search_query": query}
-            resp = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-            soup = BeautifulSoup(resp.text, "html.parser")
-            results = []
-            seen = set()
-            for a in soup.select("a"):
-                href = a.get("href", "")
-                if "/watch?v=" in href:
-                    vid = href.split("/watch?v=")[-1].split("&")[0]
-                    if vid in seen:
-                        continue
-                    seen.add(vid)
-                    title = a.get("title") or a.get_text(strip=True)
-                    results.append({
-                        "title": title,
-                        "description": "",
-                        "url": f"https://www.youtube.com/watch?v={vid}",
-                        "source": "YouTube (scrape)",
-                    })
-                    if len(results) >= max_results:
-                        break
-            return results
-        except Exception as e:
-            st.error(f"Erro na raspagem do YouTube: {e}")
             return []
 
     def _twitter_scrape(self, query, max_results=25):
