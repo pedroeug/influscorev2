@@ -1,3 +1,4 @@
+
 import streamlit as st
 import requests
 import json
@@ -7,7 +8,8 @@ import plotly.graph_objects as go
 import re
 from googlesearch import search as google_search
 from youtubesearchpython import VideosSearch
-import snscrape.modules.twitter as sntwitter
+from urllib.parse import quote_plus
+from bs4 import BeautifulSoup
 
 # Configuração da página
 st.set_page_config(page_title="InfluScore Real", page_icon="🔍", layout="wide")
@@ -19,8 +21,9 @@ body { font-family: 'Inter', sans-serif; }
 
 class RealSearchAnalyzer:
     def __init__(self):
-        self.positive_keywords = [...]
-        self.negative_keywords = [...]
+        # Defina suas listas de keywords
+        self.positive_keywords = ['sucesso', 'família', 'caridade']  # etc.
+        self.negative_keywords = ['roubo', 'casino', 'escândalo']  # etc.
 
     def search_web_real(self, query, max_results=10):
         st.info(f"🔍 Buscando no Google por: {query}")
@@ -34,7 +37,7 @@ class RealSearchAnalyzer:
         st.info(f"📺 Buscando no YouTube por: {query}")
         videosSearch = VideosSearch(query, limit=max_results)
         results = []
-        for v in videosSearch.result()['result']:
+        for v in videosSearch.result().get('result', []):
             results.append({
                 'title': v.get('title',''),
                 'description': v.get('description',''),
@@ -45,12 +48,13 @@ class RealSearchAnalyzer:
         return results
 
     def search_twitter_real(self, query, max_results=10):
-        st.info(f"🐦 Buscando no Twitter por: {query}")
-        tweets = []
-        for i, tweet in enumerate(sntwitter.TwitterSearchScraper(query).get_items()):
-            if i>=max_results: break
-            tweets.append({'text': tweet.content, 'url': f'https://twitter.com/{tweet.user.username}/status/{tweet.id}', 'source':'Twitter'})
-        st.success(f"✅ {len(tweets)} tweets do Twitter")
-        return tweets
+        st.info(f"🐦 Buscando no Twitter via Google por: {query}")
+        results = []
+        for url in google_search(f"site:twitter.com {query}", num_results=max_results, lang='pt'):
+            results.append({'text': '', 'url': url, 'source': 'Twitter'})
+        st.success(f"✅ {len(results)} resultados do Twitter/X")
+        return results
 
-    # ... include analyze_real_content, calculate_real_score, create_real_gauge, main() similar ao anterior ...
+    # Resto do código existente (análise e UI)...
+
+# Continue com a lógica do Streamlit conforme seu arquivo original
