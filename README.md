@@ -1,22 +1,16 @@
 # InfluScore Real
 
-Este projeto realiza análise de risco de imagem pública com base em dados reais do Google, YouTube e Twitter/X,
-utilizando scraping via bibliotecas open-source (sem APIs pagas).
+Este é um exemplo mínimo de aplicativo Streamlit que realiza buscas reais no Google, YouTube e Twitter/X sem uso de API paga.
 
-## Tecnologias
-- Streamlit
-- Plotly
-- BeautifulSoup
+## Dependências
+
+- streamlit
 - googlesearch-python
 - youtube-search-python
-- snscrape
 
-## Como rodar
-1. Instale as dependências:
-```
+## Execução
+
+```bash
 pip install -r requirements.txt
-```
-2. Rode a aplicação:
-```
 streamlit run streamlit_app.py
 ```
