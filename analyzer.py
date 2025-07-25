@@ -3,13 +3,7 @@ Módulo de análise avançada para o InfluScore
 Contém lógica de busca e análise de influenciadores
 """
 
-import requests
-from bs4 import BeautifulSoup
-import time
 import re
-from datetime import datetime, timedelta
-from urllib.parse import quote_plus
-import json
 
 
 class AdvancedInfluencerAnalyzer:
@@ -139,10 +133,6 @@ class AdvancedInfluencerAnalyzer:
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
-xlmt2x-codex/fix-search-to-return-real-results
-
-
- main
     def search_google_news(self, query, max_results=10):
         """Busca notícias no Google (simulação melhorada)"""
         try:
@@ -313,7 +303,6 @@ xlmt2x-codex/fix-search-to-return-real-results
         positive_score = len(found_positive) * 2
         negative_score = len(found_negative) * 3  # Palavras negativas têm peso maior
 
-xlmt2x-codex/fix-search-to-return-real-results
         # Análise contextual adicional
         positive_patterns = [
             r"\b(muito bom|excelente|fantástico|incrível|maravilhoso)\b",
@@ -322,8 +311,6 @@ xlmt2x-codex/fix-search-to-return-real-results
             r"\b(sucesso|vitória|conquista|achievement)\b",
         ]
 
-=======
-main
         negative_patterns = [
             r"\b(muito ruim|péssimo|horrível|terrível)\b",
             r"\b(odeio|detesto|não suporto)\b",
