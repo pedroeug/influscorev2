@@ -1,18 +1,21 @@
+# 🔍 InfluScore Real - Busca Verdadeira
 
-# Buscador Real
+Análise de influenciadores com dados REAIS dos últimos 90 dias.
 
-Aplicativo Streamlit para buscas reais no Google, Twitter (via Nitter) e YouTube, sem usar APIs oficiais.
+## Tecnologias
+- Streamlit
+- Requests
+- BeautifulSoup4
+- googlesearch-python
+- Plotly
+- lxml
 
-## Instalação
-
-```bash
+## Como executar
+1. Instale as dependências:
+```
 pip install -r requirements.txt
 ```
-
-## Uso
-
-```bash
+2. Execute o app:
+```
 streamlit run streamlit_app.py
 ```
-
-Use o painel lateral para inserir termo e quantidade de resultados. Navegue pelas abas e baixe os CSVs.
