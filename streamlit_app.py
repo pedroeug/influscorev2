@@ -250,6 +250,7 @@ class RealSearchAnalyzer:
         ]
     
     def search_web_real(self, query, max_results=25):
+ ppt0f2-codex/update-influscorev2-to-remove-api-key-requirement
         """Realiza busca simples no Google sem usar API."""
         try:
             st.info(f"🔍 Fazendo busca REAL no Google para: {query}")
@@ -294,6 +295,35 @@ class RealSearchAnalyzer:
                         "source": "Google",
                     }
                 )
+
+        """Realiza busca simples no Google sem API."""
+        try:
+            st.info(f"🔍 Fazendo busca REAL no Google para: {query}")
+
+            url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}"
+            headers = {"User-Agent": "Mozilla/5.0"}
+            response = requests.get(url, headers=headers, timeout=10)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            results = []
+            for g in soup.select("div.g"):
+                anchor = g.find("a")
+                title = g.find("h3")
+                snippet = g.find("span", class_="aCOpRe")
+                if not anchor or not title:
+                    continue
+                href = anchor.get("href")
+                if href.startswith("/url?"):
+                    q_match = re.search(r"q=(.*?)&", href)
+                    if q_match:
+                        href = q_match.group(1)
+                results.append({
+                    "title": title.get_text(strip=True),
+                    "snippet": snippet.get_text(strip=True) if snippet else "",
+                    "url": href,
+                    "source": "Google"
+                })
+ main
                 if len(results) >= max_results:
                     break
 
