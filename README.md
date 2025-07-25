@@ -6,6 +6,8 @@
 ![No Fake](https://img.shields.io/badge/ZERO-SIMULAÇÃO-blue?style=for-the-badge)
 ![True Data](https://img.shields.io/badge/DADOS-VERDADEIROS-green?style=for-the-badge)
 
+*Sem necessidade de API keys: todo o conteúdo é coletado via scraping simples.*
+
 ## ✅ **PROBLEMA RESOLVIDO - BUSCA REAL IMPLEMENTADA!**
 
 ### ❌ **O que estava errado antes:**
