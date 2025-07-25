@@ -1,6 +1,7 @@
+
 # Buscador Real
 
-Este aplicativo realiza buscas reais no Google, Twitter (via Nitter) e YouTube, sem usar APIs oficiais.
+Aplicativo Streamlit para buscas reais no Google, Twitter e YouTube sem usar APIs oficiais.
 
 ## Instalação
 
@@ -14,4 +15,4 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-Digite o termo de busca (mínimo 3 caracteres) e aguarde os resultados reais. Você pode visualizar as tabelas e baixar CSVs com os dados.
+Use o painel lateral para inserir termo e quantidade de resultados. Navegue pelas abas e baixe os CSVs.
