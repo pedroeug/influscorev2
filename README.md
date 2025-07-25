@@ -1,7 +1,7 @@
 
 # Buscador Real
 
-Aplicativo Streamlit para buscas reais no Google, Twitter e YouTube sem usar APIs oficiais.
+Aplicativo Streamlit para buscas reais no Google, Twitter (via Nitter) e YouTube, sem usar APIs oficiais.
 
 ## Instalação
 

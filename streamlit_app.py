@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import random
-import snscrape.modules.twitter as sntwitter
 from youtubesearchpython import VideosSearch
 
 # Stopwords em Português
@@ -47,12 +46,11 @@ def search_google(query, num_results):
     for block in blocks:
         if len(results) >= num_results:
             break
-        link_tag = block.find('a')
-        if not link_tag or not link_tag.get('href'):
+        a = block.find('a')
+        if not a or not a.get('href'):
             continue
-        url = link_tag['href']
-        title_tag = link_tag.find('h3')
-        title = title_tag.get_text() if title_tag else ''
+        url = a['href']
+        title = a.find('h3').get_text() if a.find('h3') else ''
         snippet_div = block.select_one('div.IsZvec')
         snippet = snippet_div.get_text(separator=' ') if snippet_div else ''
         text = f"{title} {snippet}"
@@ -63,20 +61,27 @@ def search_google(query, num_results):
             'keywords': extract_keywords(text),
             'score': score_result(text, query)
         })
-        time.sleep(random.uniform(0.5,1.5))
+        time.sleep(random.uniform(0.5, 1.5))
     return results
 
 def search_twitter(query, num_results):
     results = []
-    for i, tweet in enumerate(sntwitter.TwitterSearchScraper(query).get_items()):
-        if i >= num_results:
-            break
-        text = tweet.content
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    params = {'f': 'tweets', 'q': query}
+    resp = requests.get('https://nitter.net/search', headers=headers, params=params, timeout=5)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    tweets = soup.find_all('div', class_='tweet-body')
+    for tweet in tweets[:num_results]:
+        snippet = tweet.get_text(separator=' ').strip()
+        date_link = tweet.find_previous('a', class_='tweet-date')
+        url = 'https://nitter.net' + date_link['href'] if date_link else ''
         results.append({
-            'url': f"https://twitter.com/{tweet.user.username}/status/{tweet.id}",
-            'snippet': text,
-            'keywords': extract_keywords(text),
-            'score': score_result(text, query)
+            'url': url,
+            'title': '',
+            'snippet': snippet,
+            'keywords': extract_keywords(snippet),
+            'score': score_result(snippet, query)
         })
     return results
 
