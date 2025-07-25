@@ -1,13 +1,10 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 import time
 import random
-try:
-    from snscrape.modules.twitter import TwitterSearchScraper
-except ImportError:
-    from snscrape.modules.twitter import TwitterSearchScraper
+import csv
+from io import StringIO
 from youtubesearchpython import VideosSearch
 
 # Definição de stopwords em Português
@@ -22,7 +19,6 @@ STOPWORDS = set([
     'nossas','dela','delas','esta','estes','estas','aquele','aquela','aqueles','aquelas','isto','aquilo'
 ])
 
-# Funções auxiliares
 def extract_keywords(text, num_keywords=5):
     words = [w for w in ''.join([c.lower() if c.isalpha() else ' ' for c in text]).split()
              if w not in STOPWORDS and len(w) > 3]
@@ -40,13 +36,18 @@ def score_result(text, query):
     count = sum(1 for w in q_words if w in text_lower)
     return round((count / len(q_words)) * 100, 2)
 
-# Scraping Google Search sem API
+def to_csv(data):
+    if not data:
+        return ""
+    output = StringIO()
+    writer = csv.DictWriter(output, fieldnames=list(data[0].keys()))
+    writer.writeheader()
+    writer.writerows(data)
+    return output.getvalue()
+
 def search_google(query, num_results=30):
     results = []
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                      '(KHTML, like Gecko) Chrome/115.0 Safari/537.36'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     params = {'q': query, 'hl': 'pt', 'num': num_results}
     resp = requests.get('https://www.google.com/search', headers=headers, params=params, timeout=5)
     resp.raise_for_status()
@@ -55,75 +56,56 @@ def search_google(query, num_results=30):
     for block in blocks:
         if len(results) >= num_results:
             break
-        try:
-            a = block.find('a')
-            link = a['href']
-            title_tag = a.find('h3')
-            title = title_tag.text.strip() if title_tag else ''
-            snippet_div = block.find('div', class_='IsZvec')
-            snippet = snippet_div.get_text(separator=' ').strip() if snippet_div else ''
-            text = f"{title} {snippet}"
-            keywords = extract_keywords(text)
-            score = score_result(text, query)
-            results.append({
-                'source': 'google',
-                'url': link,
-                'title': title,
-                'snippet': snippet,
-                'keywords': keywords,
-                'score': score
-            })
-            time.sleep(random.uniform(0.5, 1.5))
-        except Exception:
+        a = block.find('a')
+        if not a or not a.get('href'):
             continue
-    return results
-
-# Scraping Twitter via snscrape
-def search_twitter(query, num_results=30):
-    results = []
-    for i, tweet in enumerate(TwitterSearchScraper(query).get_items()):
-        if i >= num_results:
-            break
-        text = tweet.content
+        link = a['href']
+        title_tag = a.find('h3')
+        title = title_tag.text.strip() if title_tag else ''
+        snippet_div = block.find('div', class_='IsZvec')
+        snippet = snippet_div.get_text(separator=' ').strip() if snippet_div else ''
+        text = f"{title} {snippet}"
         keywords = extract_keywords(text)
         score = score_result(text, query)
-        url = f"https://twitter.com/{tweet.user.username}/status/{tweet.id}"
-        results.append({
-            'source': 'twitter',
-            'url': url,
-            'title': '',
-            'snippet': text,
-            'keywords': keywords,
-            'score': score
-        })
+        results.append({'source':'google','url':link,'title':title,'snippet':snippet,'keywords':keywords,'score':score})
+        time.sleep(random.uniform(0.5, 1.5))
     return results
 
-# Scraping YouTube via youtubesearchpython
+def search_twitter(query, num_results=30):
+    results = []
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    params = {'f':'tweets','q':query}
+    resp = requests.get('https://nitter.net/search', headers=headers, params=params, timeout=5)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    tweets = soup.find_all('div', class_='tweet-body')
+    for tweet in tweets[:num_results]:
+        snippet = tweet.get_text(separator=' ').strip()
+        date_link = tweet.find_previous('a', class_='tweet-date')
+        url = 'https://nitter.net' + date_link['href'] if date_link else ''
+        keywords = extract_keywords(snippet)
+        score = score_result(snippet, query)
+        results.append({'source':'twitter','url':url,'title':'','snippet':snippet,'keywords':keywords,'score':score})
+    return results
+
 def search_youtube(query, num_results=30):
     results = []
     try:
         vs = VideosSearch(query, limit=num_results)
-        for video in vs.result().get('result', []):
-            title = video.get('title', '')
-            link = video.get('link', '')
+        videos = vs.result().get('result', [])
+        for video in videos:
+            title = video.get('title','')
+            link = video.get('link','')
             ds = video.get('descriptionSnippet')
-            snippet = ' '.join([d.get('text', '') for d in ds]) if ds else ''
+            snippet = ' '.join([d.get('text','') for d in ds]) if ds else ''
             text = f"{title} {snippet}"
             keywords = extract_keywords(text)
             score = score_result(text, query)
-            results.append({
-                'source': 'youtube',
-                'url': link,
-                'title': title,
-                'snippet': snippet,
-                'keywords': keywords,
-                'score': score
-            })
-    except Exception:
+            results.append({'source':'youtube','url':link,'title':title,'snippet':snippet,'keywords':keywords,'score':score})
+    except:
         pass
     return results
 
-# Interface Streamlit
 def main():
     st.title('Buscador Real: Google, Twitter e YouTube')
     query = st.text_input('Termo de busca (mínimo 3 caracteres):')
@@ -139,25 +121,21 @@ def main():
         with st.spinner('Pesquisando YouTube...'):
             youtube_res = search_youtube(query)
 
-        total = len(google_res) + len(twitter_res) + len(youtube_res)
+        total = len(google_res)+len(twitter_res)+len(youtube_res)
         if total < 30:
             st.error(f'Resultados insuficientes: {total}')
 
-        df_g = pd.DataFrame(google_res)
-        df_t = pd.DataFrame(twitter_res)
-        df_y = pd.DataFrame(youtube_res)
-
         st.subheader('Resultados Google')
-        st.dataframe(df_g)
-        st.download_button('Baixar CSV Google', df_g.to_csv(index=False).encode('utf-8'), 'google.csv', 'text/csv')
+        st.table(google_res)
+        st.download_button('Baixar CSV Google', to_csv(google_res).encode('utf-8'), 'google.csv', 'text/csv')
 
         st.subheader('Resultados Twitter')
-        st.dataframe(df_t)
-        st.download_button('Baixar CSV Twitter', df_t.to_csv(index=False).encode('utf-8'), 'twitter.csv', 'text/csv')
+        st.table(twitter_res)
+        st.download_button('Baixar CSV Twitter', to_csv(twitter_res).encode('utf-8'), 'twitter.csv', 'text/csv')
 
         st.subheader('Resultados YouTube')
-        st.dataframe(df_y)
-        st.download_button('Baixar CSV YouTube', df_y.to_csv(index=False).encode('utf-8'), 'youtube.csv', 'text/csv')
+        st.table(youtube_res)
+        st.download_button('Baixar CSV YouTube', to_csv(youtube_res).encode('utf-8'), 'youtube.csv', 'text/csv')
 
 if __name__ == '__main__':
     main()
