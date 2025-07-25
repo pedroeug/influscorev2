@@ -4,7 +4,10 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import random
-import snscrape.modules.twitter as sntwitter
+try:
+    from snscrape.modules.twitter import TwitterSearchScraper
+except ImportError:
+    from snscrape.modules.twitter import TwitterSearchScraper
 from youtubesearchpython import VideosSearch
 
 # Definição de stopwords em Português
@@ -78,7 +81,7 @@ def search_google(query, num_results=30):
 # Scraping Twitter via snscrape
 def search_twitter(query, num_results=30):
     results = []
-    for i, tweet in enumerate(sntwitter.TwitterSearchScraper(f'{query}').get_items()):
+    for i, tweet in enumerate(TwitterSearchScraper(query).get_items()):
         if i >= num_results:
             break
         text = tweet.content
