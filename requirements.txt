@@ -3,3 +3,6 @@ plotly
 requests
 beautifulsoup4
 lxml
+googlesearch-python
+youtube-search-python
+snscrape

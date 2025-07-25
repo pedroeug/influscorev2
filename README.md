@@ -1,13 +1,15 @@
 # InfluScore Real
 
-Este projeto realiza análise de risco de imagem pública com base em dados reais do Google, YouTube e Twitter/X.
-Todos os dados são obtidos via scraping e analisados sem simulação.
+Este projeto realiza análise de risco de imagem pública com base em dados reais do Google, YouTube e Twitter/X,
+utilizando scraping via bibliotecas open-source (sem APIs pagas).
 
 ## Tecnologias
 - Streamlit
 - Plotly
 - BeautifulSoup
-- Requests
+- googlesearch-python
+- youtube-search-python
+- snscrape
 
 ## Como rodar
 1. Instale as dependências:
