@@ -3,13 +3,7 @@ Módulo de análise avançada para o InfluScore
 Contém lógica de busca e análise de influenciadores
 """
 
-import requests
-from bs4 import BeautifulSoup
-import time
 import re
-from datetime import datetime, timedelta
-from urllib.parse import quote_plus
-import json
 
 
 class AdvancedInfluencerAnalyzer:
