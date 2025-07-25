@@ -2,12 +2,15 @@ import streamlit as st
 import requests
 import json
 import time
+import os
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
 from collections import defaultdict
 import re
 import subprocess
 import os
+from bs4 import BeautifulSoup
+from urllib.parse import quote_plus
 
 # Configuração da página
 st.set_page_config(
@@ -232,7 +235,7 @@ class RealSearchAnalyzer:
             'verdade', 'sinceridade', 'autenticidade', 'integridade', 'dedicação',
             'perseverança', 'determinação', 'motivação', 'otimismo', 'esperança'
         ]
-        
+
         self.negative_keywords = [
             'roubo', 'casino', 'preso', 'escândalo', 'polêmica', 'fraude',
             'golpe', 'processo', 'condenação', 'drogas', 'violência', 'agressão',
@@ -246,99 +249,205 @@ class RealSearchAnalyzer:
             'intolerância', 'machismo', 'homofobia', 'xenofobia', 'bullying',
             'assédio', 'exploração', 'manipulação', 'chantagem', 'extorsão'
         ]
-    
-    def search_web_real(self, query):
-        """Busca REAL na web usando ferramentas do sandbox"""
+
+        # Configurações de API para buscas reais
+        self.google_api_key = os.getenv("GOOGLE_API_KEY")
+        self.google_cx = os.getenv("GOOGLE_CX")
+        self.youtube_api_key = os.getenv("YOUTUBE_API_KEY")
+        self.twitter_bearer_token = os.getenv("TWITTER_BEARER_TOKEN")
+
+    def _google_scrape(self, query, max_results=25):
+        """Raspa resultados simples do Google."""
         try:
-            st.info(f"🔍 Fazendo busca REAL no Google para: {query}")
-            
-            # Usar a ferramenta de busca real do sandbox
-            # Simular chamada para a API de busca real
-            search_query = f"{query} últimas notícias"
-            
-            # Aqui seria a chamada real para a API de busca
-            # Por enquanto, vou simular uma busca real mais realística
-            
-            # Simulação de resultados REAIS baseados em padrões conhecidos
-            real_results = []
-            
-            # Busca por diferentes variações
-            search_variations = [
-                f"{query}",
-                f"{query} notícias",
-                f"{query} 2024",
-                f"{query} últimas",
-                f"{query} carreira"
-            ]
-            
-            for variation in search_variations:
-                # Simular resultados mais realísticos
-                for i in range(5):  # 5 resultados por variação = 25 total
-                    real_results.append({
-                        'title': f'Resultado real sobre {query} - Notícia {i+1}',
-                        'snippet': f'Informações reais coletadas sobre {query} através de busca web.',
-                        'url': f'https://real-source-{i}.com/{query.lower().replace(" ", "-")}',
-                        'source': 'Google Search Real'
+            url = "https://r.jina.ai/https://www.google.com/search"
+            params = {"q": query}
+            resp = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+            soup = BeautifulSoup(resp.text, "html.parser")
+            results = []
+            for g in soup.select("div.g"):
+                title = g.find("h3")
+                if not title:
+                    continue
+                link = g.find("a", href=True)
+                snippet = g.find("span", class_="aCOpRe")
+                results.append({
+                    "title": title.get_text(strip=True),
+                    "snippet": snippet.get_text(strip=True) if snippet else "",
+                    "url": link["href"] if link else "",
+                    "source": "Google (scrape)",
+                })
+                if len(results) >= max_results:
+                    break
+            return results
+        except Exception as e:
+            st.error(f"Erro na raspagem do Google: {e}")
+            return []
+
+    def _youtube_scrape(self, query, max_results=25):
+        """Raspa resultados de busca do YouTube."""
+        try:
+            url = "https://r.jina.ai/https://www.youtube.com/results"
+            params = {"search_query": query}
+            resp = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+            soup = BeautifulSoup(resp.text, "html.parser")
+            results = []
+            seen = set()
+            for a in soup.select("a"):
+                href = a.get("href", "")
+                if "/watch?v=" in href:
+                    vid = href.split("/watch?v=")[-1].split("&")[0]
+                    if vid in seen:
+                        continue
+                    seen.add(vid)
+                    title = a.get("title") or a.get_text(strip=True)
+                    results.append({
+                        "title": title,
+                        "description": "",
+                        "url": f"https://www.youtube.com/watch?v={vid}",
+                        "source": "YouTube (scrape)",
                     })
-            
-            st.success(f"✅ Coletados {len(real_results)} resultados REAIS do Google")
-            return real_results[:25]  # Retorna exatamente 25
-            
+                    if len(results) >= max_results:
+                        break
+            return results
         except Exception as e:
-            st.error(f"Erro na busca real: {str(e)}")
+            st.error(f"Erro na raspagem do YouTube: {e}")
             return []
+
+    def _twitter_scrape(self, query, max_results=25):
+        """Obtém posts do Twitter via busca no Google."""
+        return self._google_scrape(f"site:twitter.com {query}", max_results)
     
-    def search_twitter_real(self, query):
-        """Busca REAL no Twitter/X"""
-        try:
-            st.info(f"🐦 Fazendo busca REAL no Twitter/X para: {query}")
-            
-            # Busca real no Twitter via Google
-            twitter_query = f"site:twitter.com {query}"
-            
-            # Simular busca real no Twitter
-            real_tweets = []
-            
-            for i in range(25):
-                real_tweets.append({
-                    'text': f'Tweet real sobre {query} coletado da busca - Post {i+1}',
-                    'url': f'https://twitter.com/real_user_{i}/status/{1000000000000000000 + i}',
-                    'source': 'Twitter/X Real'
-                })
-            
-            st.success(f"✅ Coletados {len(real_tweets)} posts REAIS do Twitter/X")
-            return real_tweets
-            
-        except Exception as e:
-            st.error(f"Erro na busca Twitter real: {str(e)}")
-            return []
+    def search_web_real(self, query, max_results=25):
+        """Busca no Google usando API ou raspagem quando não houver chave."""
+        st.info(f"🔍 Fazendo busca no Google para: {query}")
+
+        if self.google_api_key and self.google_cx:
+            results = []
+            start = 1
+            while len(results) < max_results:
+                params = {
+                    "key": self.google_api_key,
+                    "cx": self.google_cx,
+                    "q": query,
+                    "num": min(10, max_results - len(results)),
+                    "start": start,
+                }
+                try:
+                    response = requests.get(
+                        "https://www.googleapis.com/customsearch/v1",
+                        params=params,
+                        timeout=10,
+                    )
+                    response.raise_for_status()
+                    for item in response.json().get("items", []):
+                        results.append(
+                            {
+                                "title": item.get("title"),
+                                "snippet": item.get("snippet"),
+                                "url": item.get("link"),
+                                "source": "Google API",
+                            }
+                        )
+                        if len(results) >= max_results:
+                            break
+                    if not response.json().get("items"):
+                        break
+                except Exception as e:
+                    st.error(f"Erro na busca Google API: {e}")
+                    break
+
+                start += 10
+
+            st.success(f"✅ Coletados {len(results)} resultados do Google API")
+            return results
+
+        st.info("Sem chaves de API. Usando raspagem simples do Google.")
+        return self._google_scrape(query, max_results)
     
-    def search_youtube_real(self, query):
-        """Busca REAL no YouTube"""
-        try:
-            st.info(f"📺 Fazendo busca REAL no YouTube para: {query}")
-            
-            # Busca real no YouTube
-            youtube_query = f"site:youtube.com {query}"
-            
-            # Simular busca real no YouTube
-            real_videos = []
-            
-            for i in range(25):
-                real_videos.append({
-                    'title': f'Vídeo real de {query} - Video {i+1}',
-                    'description': f'Descrição real coletada do YouTube sobre {query}',
-                    'url': f'https://youtube.com/watch?v=real_video_{i}',
-                    'views': f'{(i+1)*20000:,} visualizações',
-                    'source': 'YouTube Real'
-                })
-            
-            st.success(f"✅ Coletados {len(real_videos)} vídeos REAIS do YouTube")
-            return real_videos
-            
-        except Exception as e:
-            st.error(f"Erro na busca YouTube real: {str(e)}")
-            return []
+    def search_twitter_real(self, query, max_results=25):
+        """Busca no Twitter/X usando API ou via Google se não houver token."""
+        st.info(f"🐦 Fazendo busca no Twitter/X para: {query}")
+
+        if self.twitter_bearer_token:
+            headers = {"Authorization": f"Bearer {self.twitter_bearer_token}"}
+            params = {
+                "query": query,
+                "max_results": min(max_results, 100),
+                "tweet.fields": "public_metrics",
+            }
+
+            try:
+                resp = requests.get(
+                    "https://api.twitter.com/2/tweets/search/recent",
+                    headers=headers,
+                    params=params,
+                    timeout=10,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                tweets = []
+                for item in data.get("data", []):
+                    metrics = item.get("public_metrics", {})
+                    tweets.append({
+                        "text": item.get("text"),
+                        "url": f"https://twitter.com/i/web/status/{item['id']}",
+                        "likes": metrics.get("like_count"),
+                        "retweets": metrics.get("retweet_count"),
+                        "replies": metrics.get("reply_count"),
+                        "source": "Twitter API",
+                    })
+                    if len(tweets) >= max_results:
+                        break
+                st.success(f"✅ Coletados {len(tweets)} posts via API do Twitter/X")
+                return tweets
+            except Exception as e:
+                st.error(f"Erro na busca Twitter API: {e}")
+
+        st.info("Sem token de API. Buscando posts do Twitter via Google.")
+        return self._twitter_scrape(query, max_results)
+    
+    def search_youtube_real(self, query, max_results=25):
+        """Busca no YouTube usando API ou raspagem simples."""
+        st.info(f"📺 Fazendo busca no YouTube para: {query}")
+
+        if self.youtube_api_key:
+            params = {
+                "key": self.youtube_api_key,
+                "part": "snippet",
+                "q": query,
+                "type": "video",
+                "maxResults": min(max_results, 50),
+            }
+
+            try:
+                resp = requests.get(
+                    "https://www.googleapis.com/youtube/v3/search",
+                    params=params,
+                    timeout=10,
+                )
+                resp.raise_for_status()
+                items = resp.json().get("items", [])
+                videos = []
+                for item in items:
+                    vid = item.get("id", {}).get("videoId")
+                    snippet = item.get("snippet", {})
+                    if not vid:
+                        continue
+                    videos.append({
+                        "title": snippet.get("title"),
+                        "description": snippet.get("description"),
+                        "url": f"https://www.youtube.com/watch?v={vid}",
+                        "source": "YouTube API",
+                    })
+                    if len(videos) >= max_results:
+                        break
+                st.success(f"✅ Coletados {len(videos)} vídeos via API do YouTube")
+                return videos
+            except Exception as e:
+                st.error(f"Erro na busca YouTube API: {e}")
+
+        st.info("Sem chave de API. Raspando resultados do site do YouTube.")
+        return self._youtube_scrape(query, max_results)
     
     def analyze_real_content(self, content):
         """Analisa keywords em conteúdo REAL"""
