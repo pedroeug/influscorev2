@@ -248,6 +248,7 @@ class RealSearchAnalyzer:
         ]
     
     
+    
     def search_web_real(self, query, max_results=25):
         """Realiza busca simples no Google sem usar API."""
         try:
@@ -293,6 +294,7 @@ class RealSearchAnalyzer:
         except Exception as e:
             st.error(f"Erro na busca real: {str(e)}")
             return []
+
 
     def search_twitter_real(self, query, max_results=25):
 (self, query):
